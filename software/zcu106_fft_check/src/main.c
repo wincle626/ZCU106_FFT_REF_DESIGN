@@ -6,6 +6,8 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 #include <getopt.h>
 #include <math.h>
@@ -22,6 +24,8 @@
 #include "xaxidma.h"
 #include "xparameters.h"
 #include "xdebug.h"
+
+#define CHECK 0
 
 #define TX_BUFFER_BASE		(0xFFFC0000)
 #define RX_BUFFER_BASE		(0xFFFD0000)
@@ -40,19 +44,20 @@ int XAxiDma_Check(int MAX_PKT_LEN, XAxiDma * InstancePtr);
 float *random_reals(int n);
 void naive_dft(const float *inreal, const float *inimag,
 		float *outreal, float *outimag, int n, bool inverse);
-int datastream(int MAX_PKT_LEN, int Iter);
+int datastream(int MAX_PKT_LEN, int Iter, int Check);
 int complexstream(Complex values);
 
 int main(int argc, char** argv){
 
-	if(argc < 3){
-		printf("Please input FFT size and loop size\n");
+	if(argc != 4){
+		printf("Please input a) FFT size, b) Loop size, c) Check flag \n");
 		exit(0);
 	}
 	int MAX_PKT_LEN = atoi(argv[1]);
 	int Iter = atoi(argv[2]);
+	int Check = atoi(argv[3]);
 
-	datastream(MAX_PKT_LEN, Iter);
+	datastream(MAX_PKT_LEN, Iter, Check);
 
 	return XST_SUCCESS;
 }
@@ -81,7 +86,7 @@ void naive_dft(const float *inreal, const float *inimag,
 	}
 }
 
-int datastream(int MAX_PKT_LEN, int Iter){
+int datastream(int MAX_PKT_LEN, int Iter, int Check){
 
 	int Status;
 	int Index;
@@ -202,15 +207,24 @@ int datastream(int MAX_PKT_LEN, int Iter){
 	}
 	float *expectreal = malloc(MAX_PKT_LEN * sizeof(float));
 	float *expectimag = malloc(MAX_PKT_LEN * sizeof(float));
-//	naive_dft(inputreal, inputimag, expectreal, expectimag, MAX_PKT_LEN, false);
-	FILE *fid;
-	fid = fopen("fft8192.txt","r");
-	char line[256];
-	for(Index=0;Index<MAX_PKT_LEN;Index++){
-		fgets(line, sizeof(line), fid);
-		expectreal[Index] = (float) atof(line);
+	char filename[256]="";
+	char fftsize[256]="";
+	strcat(filename, "fft");
+	sprintf(fftsize, "%d", MAX_PKT_LEN);
+	strcat(filename, fftsize);
+	strcat(filename, ".txt");
+	if(Check==1){
+		FILE *fid;
+		fid = fopen(filename,"r");
+		char line[256];
+		for(Index=0;Index<MAX_PKT_LEN;Index++){
+			fgets(line, sizeof(line), fid);
+			expectreal[Index] = (float) atof(line);
+		}
+		fclose(fid);
+	}else{
+		naive_dft(inputreal, inputimag, expectreal, expectimag, MAX_PKT_LEN, false);
 	}
-	fclose(fid);
 	/* Initialize the input data.
 	 */
 	for(Index = 0; Index < MAX_PKT_LEN; Index ++) {
@@ -306,12 +320,14 @@ int datastream(int MAX_PKT_LEN, int Iter){
 //	printf("RxBufferPtr[%d] = (float) 0x%lx\n", Index-1, (float) RxBufferPtr[Index-1]);
 	printf("\n");
 
-//	FILE *fid;
-//	fid = fopen("fft8192.txt","a+");
-//	for(Index=0;Index<MAX_PKT_LEN;Index++){
-//		fprintf(fid,"%f\n",RxBufferPtr[2*Index]);
-//	}
-//	fclose(fid);
+	if(Check!=1){
+		FILE *fid;
+		fid = fopen(filename,"a+");
+		for(Index=0;Index<MAX_PKT_LEN;Index++){
+			fprintf(fid,"%f\n",RxBufferPtr[2*Index]);
+		}
+		fclose(fid);
+	}
 
 	free(inputreal);
 	free(inputimag);
