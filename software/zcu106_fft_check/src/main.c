@@ -287,40 +287,33 @@ int datastream(int MAX_PKT_LEN, int Iter, int Check){
 //		printf("RxBufferPtr[%d] = (float) %f\n", Index, (float) RxBufferPtr[Index]);
 //	}
 
-	printf("Errors check...\n");
-	int count = 0;
-	for(Index = 0; Index < MAX_PKT_LEN; Index ++) {
-		if((RxBufferPtr[2*Index] - expectreal[Index])
-			*(RxBufferPtr[2*Index] - expectreal[Index])
-			> 0.0001*MAX_PKT_LEN){
-//			printf("expectreal[%d] = (float) %f\n", Index, expectreal[Index]);
-//			printf("RxBufferPtr[%d] = (float) %f\n", 2*Index, (float) RxBufferPtr[2*Index]);
-			count ++;
-		}
-//		if((RxBufferPtr[2*Index+1] - expectimag[Index])
-//			*(RxBufferPtr[2*Index+1] - expectimag[Index])
-//			> 0.0001*MAX_PKT_LEN){
-////			printf("expectimag[%d] = (float) %f\n", Index, expectimag[Index]);
-////			printf("RxBufferPtr[%d] = (float) %f\n", 2*Index+1, (float) RxBufferPtr[2*Index+1]);
-//			count ++;
-//		}
-	}
-//	for(Index = 0; Index < MAX_PKT_LEN; Index ++) {
-//		printf("TxBufferPtr[%d] = (float) 0x%lx\n", Index, (float) TxBufferPtr[Index]);
-//	}
-//	for(Index = 0; Index < MAX_PKT_LEN; Index ++) {
-//		printf("RxBufferPtr[%d] = (float) 0x%lx\n", Index, (float) RxBufferPtr[Index]);
-//	}
-	if(count > 0 ){
-		printf("%d errors found. \n", count);
-	}else{
-		printf("No errors found. \n");
-	}
-//	printf("TxBufferPtr[%d] = (float) 0x%lx\n", Index-1, (float) TxBufferPtr[Index-1]);
-//	printf("RxBufferPtr[%d] = (float) 0x%lx\n", Index-1, (float) RxBufferPtr[Index-1]);
-	printf("\n");
 
-	if(Check!=1){
+	if(Check==1){
+		printf("Errors check...\n");
+		int count = 0;
+		for(Index = 0; Index < MAX_PKT_LEN; Index ++) {
+			if((RxBufferPtr[2*Index] - expectreal[Index])
+				*(RxBufferPtr[2*Index] - expectreal[Index])
+				> 0.0001*MAX_PKT_LEN){
+	//			printf("expectreal[%d] = (float) %f\n", Index, expectreal[Index]);
+	//			printf("RxBufferPtr[%d] = (float) %f\n", 2*Index, (float) RxBufferPtr[2*Index]);
+				count ++;
+			}
+	//		if((RxBufferPtr[2*Index+1] - expectimag[Index])
+	//			*(RxBufferPtr[2*Index+1] - expectimag[Index])
+	//			> 0.0001*MAX_PKT_LEN){
+	////			printf("expectimag[%d] = (float) %f\n", Index, expectimag[Index]);
+	////			printf("RxBufferPtr[%d] = (float) %f\n", 2*Index+1, (float) RxBufferPtr[2*Index+1]);
+	//			count ++;
+	//		}
+		}
+		if(count > 0 ){
+			printf("%d errors found. \n", count);
+		}else{
+			printf("No errors found. \n");
+		}
+	}else{
+		printf("\n");
 		FILE *fid;
 		fid = fopen(filename,"a+");
 		for(Index=0;Index<MAX_PKT_LEN;Index++){
