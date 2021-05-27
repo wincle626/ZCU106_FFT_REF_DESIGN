@@ -62,4 +62,4 @@ PS: N/A indicates not functional as the FPGA crashed
 
 ## Undervolt Error Detection
 
-So far, by tuning both VCCINT and VCCBRAM to the lowest voltage before crash, there is no error captured by reading the pre-written data from BRAM. 
+So far, by tuning both VCCINT and VCCBRAM to the lowest voltage before crash, there is no error captured by comparing the FFT output to DFT output both using the same pre-defined input data. 
