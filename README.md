@@ -57,3 +57,9 @@ The VCCINT is the power supply rail for programm logic system while the VCCBRAM 
 |      0.55     |         318.09         |      0.60      |          16.33         |
 |      0.52     |         290.86         |      0.59      |          15.07         |
 |      0.51     |          N/A           |      0.58      |           N/A          |
+
+PS: N/A indicates not functional as the FPGA crashed
+
+## Undervolt Error Detection
+
+So far, by tuning both VCCINT and VCCBRAM to the lowest voltage before crash, there is no error captured by reading the pre-written data from BRAM. 
