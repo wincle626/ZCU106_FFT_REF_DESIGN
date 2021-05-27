@@ -1,1 +1,7 @@
-# ZCU106_FFT_REF_DESIGN
+# Reference design for Xilinx FFT
+
+## Hardware
+
+## Software
+
+## Experiment
